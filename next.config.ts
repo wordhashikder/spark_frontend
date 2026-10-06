@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+type Redirect = Awaited<
+  ReturnType<NonNullable<NextConfig["redirects"]>>
+>[number];
+
 const isDev = process.env.NODE_ENV === "development";
 
 /**
@@ -35,11 +39,75 @@ const securityHeaders = [
   },
 ];
 
+/*
+ * One host only. When NEXT_PUBLIC_SITE_URL is a www address, any request that
+ * arrives on the bare domain is answered with a single 301 to the same path on
+ * www. (The equivalent of an .htaccess rule; this stack has no Apache.)
+ */
+const siteUrl = new URL(
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+);
+const bareHost = siteUrl.hostname.startsWith("www.")
+  ? siteUrl.hostname.slice(4)
+  : null;
+
+const hostRedirects: Redirect[] = bareHost
+  ? [
+      {
+        // `(.*)` keeps the path exactly as requested, trailing slash included.
+        source: "/:path(.*)",
+        has: [{ type: "host", value: bareHost.replaceAll(".", "\\.") }],
+        destination: `${siteUrl.origin}/:path`,
+        statusCode: 301,
+      },
+    ]
+  : [];
+
+/*
+ * Addresses used before the /uk/ prefix, and any attempt to reach an installer
+ * profile underneath a location. Each one answers with a 301 to the single
+ * canonical URL, so none of them can become a second indexable copy.
+ */
+const directory = "/uk/ev-charger-installers";
+const profiles = "/uk/installer";
+const legacyRedirects: Redirect[] = [
+  {
+    source: "/ev-charger-installers",
+    destination: `${directory}/`,
+    statusCode: 301,
+  },
+  {
+    source: "/ev-charger-installers/:location",
+    destination: `${directory}/:location/`,
+    statusCode: 301,
+  },
+  {
+    source: "/ev-charger-installers/:location/page/:number",
+    destination: `${directory}/:location/page/:number/`,
+    statusCode: 301,
+  },
+  {
+    source: "/ev-charger-installers/:location/:installer",
+    destination: `${profiles}/:installer/`,
+    statusCode: 301,
+  },
+  {
+    source: `${directory}/:location/:installer`,
+    destination: `${profiles}/:installer/`,
+    statusCode: 301,
+  },
+];
+
 const nextConfig: NextConfig = {
   // Self-contained server bundle for the Docker image (see Dockerfile).
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
+  // Every page URL ends with a slash; /about answers with a redirect to /about/.
+  trailingSlash: true,
+  async redirects() {
+    return [...hostRedirects, ...legacyRedirects];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
