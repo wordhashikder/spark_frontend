@@ -15,7 +15,7 @@ import { PhotoBanner } from "@/components/about/photo-banner";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { CtaBand } from "@/components/sections/cta-band";
 import { FeatureCard } from "@/components/sections/feature-blocks";
-import { JsonLd } from "@/components/sections/json-ld";
+import { PageSchema } from "@/components/sections/page-schema";
 import { ButtonLink } from "@/components/ui/button";
 import { IconBadge } from "@/components/ui/icon-badge";
 import {
@@ -24,18 +24,20 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
-import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 
 const title = "About Us: The UK Electrician Marketplace";
 const description =
   "PickASparky is an independent UK marketplace that helps homeowners and businesses find, compare and get quotes from suitable electricians in their area.";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title,
   description,
   path: routes.about,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const differences = [
   {
@@ -280,16 +282,11 @@ export default function AboutPage() {
 
       <LocationsDirectory />
 
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "AboutPage",
-          "@id": `${absoluteUrl(routes.about)}#webpage`,
-          url: absoluteUrl(routes.about),
-          name: title,
-          description,
-          inLanguage: "en-GB",
-          isPartOf: { "@id": `${site.url}/#website` },
+      <PageSchema
+        {...page}
+        type="AboutPage"
+        crumb="About"
+        extra={{
           about: { "@id": `${site.url}/#organization` },
           mainEntity: { "@id": `${site.url}/#organization` },
         }}

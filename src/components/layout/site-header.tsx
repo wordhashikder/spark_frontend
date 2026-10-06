@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { HomeLink } from "@/components/layout/home-link";
 import { SiteMenu } from "@/components/layout/site-menu";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/layout";
@@ -12,11 +12,7 @@ export function SiteHeader() {
         size="narrow"
         className="flex h-[72px] items-center justify-between max-[359px]:px-4"
       >
-        <Link
-          href={routes.home}
-          aria-label={`${site.name} home`}
-          className="shrink-0"
-        >
+        <HomeLink aria-label={`${site.name} home`} className="shrink-0">
           <Image
             src="/logo.svg"
             alt={site.name}
@@ -26,7 +22,7 @@ export function SiteHeader() {
             unoptimized
             className="h-6 w-auto min-[360px]:h-7 sm:h-8"
           />
-        </Link>
+        </HomeLink>
         <div className="flex items-center gap-1 min-[360px]:gap-2 sm:gap-4">
           <SiteMenu />
           <ButtonLink

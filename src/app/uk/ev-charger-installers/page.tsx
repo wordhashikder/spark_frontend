@@ -4,6 +4,7 @@ import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { PostcodeForm } from "@/components/sections/postcode-form";
 import { Container } from "@/components/ui/layout";
 import { api } from "@/lib/api";
@@ -13,12 +14,14 @@ import { locationPath, routes } from "@/lib/site";
 // The list of locations changes rarely; refresh it hourly.
 export const revalidate = 3600;
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "EV Charger Installers Near You",
   description:
     "Find EV charger installers near you. Browse vetted local electricians by UK town or city, or enter your postcode to compare up to 5 free quotes.",
   path: routes.installers,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 export default async function InstallersHubPage() {
   const locations = await api.locations();
@@ -45,6 +48,7 @@ export default async function InstallersHubPage() {
       <LocationsIndex locations={locations} />
       <LocationsDirectory />
 
+      <PageSchema {...page} type="CollectionPage" />
       {locations.length > 0 ? (
         <JsonLd
           data={{

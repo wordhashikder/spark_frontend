@@ -8,7 +8,7 @@ import {
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
-import { JsonLd } from "@/components/sections/json-ld";
+import { PageSchema } from "@/components/sections/page-schema";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
@@ -16,11 +16,13 @@ import { routes, site } from "@/lib/site";
 
 const description = `Contact PickASparky about quotes, joining as an electrician or your account. Email ${site.email}. We aim to reply within 1 working day.`;
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Contact Us: Homeowner and Electrician Support",
   description,
   path: routes.contact,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const promises = [
   {
@@ -40,31 +42,24 @@ const promises = [
   },
 ];
 
-const contactSchema = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  name: "Contact PickASparky",
-  description,
-  url: absoluteUrl(routes.contact),
-  inLanguage: "en-GB",
-  mainEntity: {
-    "@type": "Organization",
-    "@id": `${site.url}/#organization`,
-    name: site.name,
-    url: site.url,
+/** Who this page is about: the organisation and how to reach its support team. */
+const supportContact = {
+  "@type": "Organization",
+  "@id": `${site.url}/#organization`,
+  name: site.name,
+  url: absoluteUrl(routes.home),
+  email: site.email,
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
     email: site.email,
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "customer support",
-      email: site.email,
-      areaServed: "GB",
-      availableLanguage: "English",
-      hoursAvailable: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "09:00",
-        closes: "17:00",
-      },
+    areaServed: "GB",
+    availableLanguage: "English",
+    hoursAvailable: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "17:00",
     },
   },
 };
@@ -160,7 +155,12 @@ export default function ContactPage() {
 
       <LocationsDirectory />
 
-      <JsonLd data={contactSchema} />
+      <PageSchema
+        {...page}
+        type="ContactPage"
+        crumb="Contact Us"
+        extra={{ mainEntity: supportContact }}
+      />
     </>
   );
 }

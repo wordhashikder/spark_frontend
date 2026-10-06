@@ -13,7 +13,7 @@ export function generateStaticParams() {
   return [];
 }
 
-type Props = PageProps<"/ev-charger-installers/[location]">;
+type Props = PageProps<"/uk/ev-charger-installers/[location]">;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { location: slug } = await params;

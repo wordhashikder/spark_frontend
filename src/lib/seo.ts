@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
 
-/** Absolute URL for a site path. */
-export const absoluteUrl = (path = "/") =>
-  `${site.url}${path.startsWith("/") ? path : `/${path}`}`;
+/**
+ * Canonical form of a site path: pages end with a slash, files do not
+ * (the same rule as `trailingSlash` in next.config.ts).
+ */
+function canonicalPath(path: string) {
+  const [, pathname = "/", suffix = ""] = /^([^?#]*)(.*)$/.exec(path) ?? [];
+  const rooted = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const isFile = /\.[a-z0-9]+$/i.test(rooted);
+  return `${rooted.endsWith("/") || isFile ? rooted : `${rooted}/`}${suffix}`;
+}
+
+/** Absolute, canonical URL for a site path. */
+export const absoluteUrl = (path = "/") => `${site.url}${canonicalPath(path)}`;
 
 type PageMeta = {
   title: string;
@@ -55,7 +65,7 @@ export function organizationSchema(): Json {
     "@type": "Organization",
     "@id": `${site.url}/#organization`,
     name: site.name,
-    url: site.url,
+    url: absoluteUrl("/"),
     logo: absoluteUrl("/logo.svg"),
     description: site.description,
     email: site.email,
@@ -77,18 +87,63 @@ export function websiteSchema(): Json {
     "@type": "WebSite",
     "@id": `${site.url}/#website`,
     name: site.name,
-    url: site.url,
+    url: absoluteUrl("/"),
     inLanguage: "en-GB",
     publisher: { "@id": `${site.url}/#organization` },
   };
 }
 
+export type WebPageType =
+  | "WebPage"
+  | "AboutPage"
+  | "ContactPage"
+  | "FAQPage"
+  | "CollectionPage"
+  | "ProfilePage";
+
+/**
+ * The page itself as a `WebPage` (or a more specific subtype), tied to the
+ * site, the organisation and the page's breadcrumb trail by `@id`. Every page
+ * except the homepage has a BreadcrumbList with the matching `@id`.
+ */
+export function webPageSchema(args: {
+  type?: WebPageType;
+  title: string;
+  description: string;
+  path: string;
+  /** Extra properties for the node, e.g. `mainEntity`. */
+  extra?: Json;
+}): Json {
+  const url = absoluteUrl(args.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": args.type ?? "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: args.title,
+    description: args.description,
+    inLanguage: "en-GB",
+    isPartOf: { "@id": `${site.url}/#website` },
+    publisher: { "@id": `${site.url}/#organization` },
+    ...(args.path === "/"
+      ? {}
+      : { breadcrumb: { "@id": breadcrumbId(args.path) } }),
+    ...args.extra,
+  };
+}
+
+/** `@id` of a page's BreadcrumbList, so its WebPage node can point at it. */
+const breadcrumbId = (path: string) => `${absoluteUrl(path)}#breadcrumb`;
+
+/** The trail to a page; the last item is the page itself. */
 export function breadcrumbSchema(
   items: { name: string; path: string }[],
 ): Json {
+  const current = items.at(-1);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    ...(current ? { "@id": breadcrumbId(current.path) } : {}),
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -98,15 +153,23 @@ export function breadcrumbSchema(
   };
 }
 
+/** Questions and answers as schema.org `Question` nodes. */
+export function faqEntities(
+  items: { question: string; answer: string }[],
+): Json[] {
+  return items.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  }));
+}
+
+/** A FAQ block inside a page that is not itself a FAQ page. */
 export function faqSchema(items: { question: string; answer: string }[]): Json {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
-    })),
+    mainEntity: faqEntities(items),
   };
 }
 

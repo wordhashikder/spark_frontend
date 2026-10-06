@@ -22,7 +22,7 @@ export function generateStaticParams() {
   return [];
 }
 
-type Props = PageProps<"/ev-charger-installers/[location]/page/[number]">;
+type Props = PageProps<"/uk/ev-charger-installers/[location]/page/[number]">;
 
 async function load({ params }: Pick<Props, "params">) {
   const { location: slug, number } = await params;

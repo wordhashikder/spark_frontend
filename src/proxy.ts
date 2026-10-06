@@ -5,6 +5,7 @@ import {
   REFRESH_COOKIE,
   refreshCookieOptions,
 } from "@/lib/session-cookies";
+import { routes } from "@/lib/site";
 
 /*
  * Keeps an installer signed in. The access token lasts minutes and the
@@ -85,7 +86,7 @@ function refreshOnce(refreshToken: string) {
 }
 
 function redirectToLogin(request: NextRequest) {
-  const login = new URL("/installer/login", request.url);
+  const login = new URL(routes.login, request.url);
   login.searchParams.set(
     "next",
     `${request.nextUrl.pathname}${request.nextUrl.search}`,

@@ -17,7 +17,12 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui/layout";
-import { absoluteUrl, howToSchema, serviceSchema } from "@/lib/seo";
+import {
+  absoluteUrl,
+  howToSchema,
+  serviceSchema,
+  webPageSchema,
+} from "@/lib/seo";
 import { installerPath, locationPath, routes } from "@/lib/site";
 import type { InstallerCard, LocationDetail, Review } from "@/lib/types";
 
@@ -227,6 +232,12 @@ export function LocationView({
 
       <JsonLd
         data={[
+          webPageSchema({
+            type: "CollectionPage",
+            title: `EV Charger Installers in ${city}`,
+            description: `Compare up to 5 free quotes from vetted EV charger installers in ${city}.`,
+            path,
+          }),
           serviceSchema({
             name: `EV charger installer quotes in ${city}`,
             description: `Free service that matches homeowners and businesses in ${city} with up to 5 vetted, local EV charger installers.`,
@@ -249,9 +260,7 @@ export function LocationView({
                     "@type": "ListItem",
                     position: index + 1,
                     name: installer.business_name,
-                    url: absoluteUrl(
-                      installerPath(installer.location_slug, installer.slug),
-                    ),
+                    url: absoluteUrl(installerPath(installer.slug)),
                   })),
                 },
               ]

@@ -25,7 +25,7 @@ import { CheckBullet } from "@/components/ui/icon-badge";
 import { Container } from "@/components/ui/layout";
 import { StarRating } from "@/components/ui/star-rating";
 import { accreditationLabels, serviceLabels } from "@/content/labels";
-import { installerSchema } from "@/lib/seo";
+import { absoluteUrl, installerSchema, webPageSchema } from "@/lib/seo";
 import { installerPath, locationPath, routes } from "@/lib/site";
 import type {
   AccreditationScheme,
@@ -83,7 +83,7 @@ export function InstallerProfile({
   similar,
 }: InstallerProfileProps) {
   const name = installer.business_name;
-  const path = installerPath(installer.location_slug, installer.slug);
+  const path = installerPath(installer.slug);
   const hasRating = installer.rating_avg !== null && installer.review_count > 0;
   const hasPhotos = installer.photos.length > 0;
   const reviewsLabel = `${installer.review_count} ${installer.review_count === 1 ? "review" : "reviews"}`;
@@ -380,19 +380,30 @@ export function InstallerProfile({
       </Container>
 
       <JsonLd
-        data={installerSchema({
-          name,
-          path,
-          town: installer.town,
-          description: paragraphs.join(" ") || installer.tagline,
-          image: installer.logo_url,
-          areasServed: installer.areas_covered,
-          rating: {
-            average: installer.rating_avg,
-            count: installer.review_count,
-          },
-          reviews,
-        })}
+        data={[
+          webPageSchema({
+            type: "ProfilePage",
+            title: `${name}: EV Charger Installer in ${installer.town}`,
+            description:
+              installer.tagline ??
+              `${name} is an EV charger installer covering ${installer.town}.`,
+            path,
+            extra: { mainEntity: { "@id": `${absoluteUrl(path)}#business` } },
+          }),
+          installerSchema({
+            name,
+            path,
+            town: installer.town,
+            description: paragraphs.join(" ") || installer.tagline,
+            image: installer.logo_url,
+            areasServed: installer.areas_covered,
+            rating: {
+              average: installer.rating_avg,
+              count: installer.review_count,
+            },
+            reviews,
+          }),
+        ]}
       />
     </div>
   );

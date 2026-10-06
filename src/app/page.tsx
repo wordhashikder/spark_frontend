@@ -6,6 +6,7 @@ import { QuoteComparisonArt } from "@/components/home/quote-comparison-art";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { InstallerLogo } from "@/components/sections/installer-card";
 import { JsonLd } from "@/components/sections/json-ld";
+import { PageSchema } from "@/components/sections/page-schema";
 import { PostcodeForm } from "@/components/sections/postcode-form";
 import { ReviewsMarquee } from "@/components/sections/reviews";
 import { ButtonLink } from "@/components/ui/button";
@@ -21,13 +22,15 @@ import { api } from "@/lib/api";
 import { pageMetadata, serviceSchema } from "@/lib/seo";
 import { installerPath, routes } from "@/lib/site";
 
+const page = {
+  title: "Compare EV Charger Installer Quotes in the UK",
+  description:
+    "Find trusted, vetted EV charger installers near you. Enter your postcode, compare up to 5 free quotes and choose the right electrician. No obligation.",
+  path: routes.home,
+};
+
 export const metadata: Metadata = {
-  ...pageMetadata({
-    title: "Compare EV Charger Installer Quotes in the UK",
-    description:
-      "Find trusted, vetted EV charger installers near you. Enter your postcode, compare up to 5 free quotes and choose the right electrician. No obligation.",
-    path: "/",
-  }),
+  ...pageMetadata(page),
   title: {
     absolute: "PickASparky | Compare EV Charger Installer Quotes in the UK",
   },
@@ -374,10 +377,7 @@ export default async function HomePage() {
                     {spotlight.town}
                   </p>
                   <Link
-                    href={installerPath(
-                      spotlight.location_slug,
-                      spotlight.slug,
-                    )}
+                    href={installerPath(spotlight.slug)}
                     className="mt-1 inline-flex items-center gap-1 font-semibold text-primary"
                   >
                     View profile <ArrowRight aria-hidden className="size-3" />
@@ -406,12 +406,13 @@ export default async function HomePage() {
       <ReviewsMarquee reviews={reviews} />
       <LocationsDirectory />
 
+      <PageSchema {...page} />
       <JsonLd
         data={serviceSchema({
           name: "EV charger installer quote comparison",
           description:
             "Free service that matches UK homeowners and businesses with up to 5 vetted, local EV charger installers.",
-          path: "/",
+          path: routes.home,
         })}
       />
     </>

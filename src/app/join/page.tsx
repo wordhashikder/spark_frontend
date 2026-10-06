@@ -21,6 +21,7 @@ import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { FaqList } from "@/components/sections/faq";
 import { IconColumns, StepNumber } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
+import { PageSchema } from "@/components/sections/page-schema";
 import { ButtonLink } from "@/components/ui/button";
 import { IconBadge } from "@/components/ui/icon-badge";
 import {
@@ -40,11 +41,13 @@ const lowestPaidPrice = Math.min(
 
 const description = `Join PickASparky to get enquiries from homeowners looking for vetted electricians in your area. Free listing, plans from £${lowestPaidPrice} a month, no long-term contracts.`;
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Electrician Leads: Join as an Installer",
   description,
   path: routes.join,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const heroClaims = [
   "Quality, local enquiries",
@@ -343,6 +346,7 @@ export default function JoinPage() {
 
       <LocationsDirectory />
 
+      <PageSchema {...page} crumb="Join as an Installer" />
       <JsonLd data={membershipSchema} />
     </>
   );

@@ -5,15 +5,18 @@ import {
   type LegalSection,
   LegalText,
 } from "@/components/legal/legal-layout";
+import { PageSchema } from "@/components/sections/page-schema";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Terms & Conditions",
   description:
     "The terms that govern your use of the PickASparky marketplace: what users and installers agree to, how quotes and payments work, and limits on our liability.",
   path: routes.terms,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const sections: LegalSection[] = [
   {
@@ -105,10 +108,13 @@ const sections: LegalSection[] = [
 
 export default function TermsPage() {
   return (
-    <LegalLayout
-      title="Terms & Conditions"
-      updated="Sept 2026"
-      sections={sections}
-    />
+    <>
+      <LegalLayout
+        title="Terms & Conditions"
+        updated="Sept 2026"
+        sections={sections}
+      />
+      <PageSchema {...page} crumb="Terms & Conditions" />
+    </>
   );
 }

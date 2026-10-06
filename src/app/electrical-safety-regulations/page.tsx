@@ -19,6 +19,7 @@ import {
 } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
@@ -26,11 +27,13 @@ import { routes } from "@/lib/site";
 const description =
   "A plain-English guide to UK electrical safety: Part P of the Building Regulations, BS 7671, Competent Person Schemes, EICRs and when to use an electrician.";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Electrical Safety Regulations UK: Simple Guide",
   description,
   path: routes.safety,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const regulations = [
   {
@@ -224,6 +227,7 @@ export default function ElectricalSafetyPage() {
 
       <LocationsDirectory />
 
+      <PageSchema {...page} crumb="Electrical Safety & Regulations" />
       <JsonLd
         data={guideArticleSchema({
           headline: "A simple guide to UK electrical safety and regulations",

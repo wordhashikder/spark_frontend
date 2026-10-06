@@ -5,6 +5,7 @@ import { QuoteFlow } from "@/components/quote/quote-flow";
 import type { InstallerRef, QuoteEntry } from "@/components/quote/state";
 import { StepNumber } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
+import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import { quoteEnums } from "@/content/quote-questions";
 import { api } from "@/lib/api";
@@ -15,11 +16,13 @@ import type { InstallationType } from "@/lib/types";
 const description =
   "Get up to 5 free EV charger installation quotes from vetted local installers. Enter your postcode, answer 6 short questions and compare. No obligation.";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Get Free EV Charger Installation Quotes",
   description,
   path: routes.quotes,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const howItWorks = [
   {
@@ -66,6 +69,7 @@ export default function GetQuotesPage({
         </Container>
       </section>
 
+      <PageSchema {...page} crumb="Get Free Quotes" />
       <JsonLd
         data={serviceSchema({
           name: "Free EV charger installation quotes",

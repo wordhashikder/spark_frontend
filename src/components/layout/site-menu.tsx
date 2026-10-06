@@ -1,26 +1,30 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { LogIn, Menu, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { navigation } from "@/lib/site";
-import { cn } from "@/lib/utils";
+import { headerMenu } from "@/lib/site";
+
+const icons = { join: UserRound, login: LogIn } as const;
 
 /**
- * Site navigation behind the header's menu button.
+ * The header's menu button and its two options for electricians: join and
+ * sign in. The same dropdown is used on every screen size.
  * The links are always in the HTML (hidden when closed) so crawlers can follow them.
  */
 export function SiteMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const panelId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Close after navigation.
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger
   useEffect(() => setOpen(false), [pathname]);
 
+  // While open: Escape closes and returns focus, and so does a press outside.
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -29,12 +33,21 @@ export function SiteMenu() {
         buttonRef.current?.focus();
       }
     };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
   }, [open]);
 
   return (
-    <>
+    // From `sm` the dropdown hangs from the button; on phones it is placed
+    // against the header instead, so it can never run off the screen.
+    <div ref={rootRef} className="sm:relative">
       <button
         ref={buttonRef}
         type="button"
@@ -44,56 +57,37 @@ export function SiteMenu() {
         onClick={() => setOpen((value) => !value)}
         className="inline-flex size-10 items-center justify-center rounded-lg text-ink hover:bg-surface"
       >
-        {open ? (
-          <X aria-hidden className="size-5" strokeWidth={2.25} />
-        ) : (
-          <Menu aria-hidden className="size-5" strokeWidth={2.25} />
-        )}
+        <Menu aria-hidden className="size-5" strokeWidth={2.25} />
       </button>
-
-      {open ? (
-        <button
-          type="button"
-          aria-hidden
-          tabIndex={-1}
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 top-[72px] z-40 cursor-default bg-ink/20"
-        />
-      ) : null}
 
       <nav
         id={panelId}
-        aria-label="Main"
+        aria-label="Electricians"
         hidden={!open}
-        className={cn(
-          "absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-72px)] overflow-y-auto border-b border-line bg-white shadow-card",
-        )}
+        className="absolute top-[62px] right-4 z-50 w-[272px] max-w-[calc(100vw-2rem)] rounded-lg border border-line bg-white p-1.5 shadow-card sm:top-full sm:right-0 sm:mt-1.5"
       >
-        <div className="mx-auto grid w-full max-w-[1168px] gap-8 px-5 py-8 sm:grid-cols-3 sm:px-8 sm:py-10">
-          {navigation.map((group) => (
-            <div key={group.title}>
-              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-primary">
-                {group.title}
-              </p>
-              <ul className="space-y-1">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className={cn(
-                        "-mx-2 block rounded-md px-2 py-2 text-[15px] font-medium text-ink hover:bg-mint-soft",
-                        pathname === link.href && "text-primary",
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <ul className="divide-y divide-line">
+          {headerMenu.map((item) => {
+            const Icon = icons[item.icon];
+            return (
+              <li key={item.href} className="py-1 first:pt-0 last:pb-0">
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="flex h-11 items-center gap-3.5 rounded-md px-3 text-[15px] font-medium text-ink hover:bg-mint-soft focus-visible:bg-mint-soft"
+                >
+                  <Icon
+                    aria-hidden
+                    className="size-5 shrink-0 text-forest"
+                    strokeWidth={2}
+                  />
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
-    </>
+    </div>
   );
 }

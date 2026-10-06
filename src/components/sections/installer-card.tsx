@@ -42,7 +42,8 @@ export function InstallerLogo({
 }
 
 export function InstallerCard({ installer }: { installer: Installer }) {
-  const href = installerPath(installer.location_slug, installer.slug);
+  // One profile URL per installer, whichever location page shows this card.
+  const href = installerPath(installer.slug);
   return (
     <article className="flex flex-col gap-4 rounded-lg border border-line bg-white p-4 font-inter">
       <div className="flex items-center gap-4">

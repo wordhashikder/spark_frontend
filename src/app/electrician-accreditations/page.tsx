@@ -20,6 +20,7 @@ import { type FaqItem, FaqList } from "@/components/sections/faq";
 import { FeatureCard, IconColumns } from "@/components/sections/feature-blocks";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
@@ -27,11 +28,13 @@ import { routes } from "@/lib/site";
 const description =
   "What NICEIC, NAPIT, TrustMark and MCS mean, what each electrician accreditation covers and how to check an electrician’s registration before you hire.";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Electrician Accreditations: NICEIC, NAPIT, MCS",
   description,
   path: routes.accreditations,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const schemes = [
   {
@@ -261,6 +264,7 @@ export default function AccreditationsPage() {
 
       <LocationsDirectory />
 
+      <PageSchema {...page} crumb="Electrician Accreditations" />
       <JsonLd
         data={guideArticleSchema({
           headline: "Understanding electrician accreditations",

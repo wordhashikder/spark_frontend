@@ -10,7 +10,7 @@ export const MAX_LISTING_PAGE = MAX_INSTALLERS / INSTALLERS_PER_PAGE;
 
 /** Page 1 is the location page itself; later pages get their own cacheable path. */
 export const listingPagePath = (basePath: string, page: number) =>
-  page <= 1 ? basePath : `${basePath}/page/${page}`;
+  page <= 1 ? basePath : `${basePath}page/${page}/`;
 
 /** Anchor on the first card added by the latest "Load More" step. */
 const NEW_ITEMS_ID = "more-installers";
@@ -22,7 +22,7 @@ type InstallerListingProps = {
   total: number;
   /** How many "pages" of installers are currently shown (cumulative). */
   page: number;
-  /** The location page path; further pages live at `{basePath}/page/{n}`. */
+  /** The location page path; further pages live at `{basePath}page/{n}/`. */
   basePath: string;
 };
 

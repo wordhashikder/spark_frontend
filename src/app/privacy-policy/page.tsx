@@ -6,15 +6,18 @@ import {
   type LegalSection,
   LegalText,
 } from "@/components/legal/legal-layout";
+import { PageSchema } from "@/components/sections/page-schema";
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Privacy Policy",
   description:
     "How PickASparky collects, uses, shares and protects your personal information when you request EV charger installation quotes, and your UK GDPR rights.",
   path: routes.privacy,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const sections: LegalSection[] = [
   {
@@ -116,10 +119,13 @@ const sections: LegalSection[] = [
 
 export default function PrivacyPolicyPage() {
   return (
-    <LegalLayout
-      title="Privacy Policy"
-      updated="Sept 2026"
-      sections={sections}
-    />
+    <>
+      <LegalLayout
+        title="Privacy Policy"
+        updated="Sept 2026"
+        sections={sections}
+      />
+      <PageSchema {...page} crumb="Privacy Policy" />
+    </>
   );
 }

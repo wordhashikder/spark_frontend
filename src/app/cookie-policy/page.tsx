@@ -6,15 +6,18 @@ import {
   type LegalSection,
   LegalText,
 } from "@/components/legal/legal-layout";
+import { PageSchema } from "@/components/sections/page-schema";
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "Cookie Policy",
   description:
     "Which cookies the PickASparky website uses: strictly necessary cookies only, no analytics or advertising cookies, and how to control cookies in your browser.",
   path: routes.cookies,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 /*
  * Keep this in step with the site as built. Today the only cookies we set are
@@ -161,6 +164,13 @@ const sections: LegalSection[] = [
 
 export default function CookiePolicyPage() {
   return (
-    <LegalLayout title="Cookie Policy" updated="Oct 2026" sections={sections} />
+    <>
+      <LegalLayout
+        title="Cookie Policy"
+        updated="Oct 2026"
+        sections={sections}
+      />
+      <PageSchema {...page} crumb="Cookie Policy" />
+    </>
   );
 }

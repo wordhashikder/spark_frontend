@@ -1,8 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HomeLink } from "@/components/layout/home-link";
 import { Container } from "@/components/ui/layout";
-import { legalLinks, navigation, routes, site } from "@/lib/site";
+import { legalLinks, navigation, site } from "@/lib/site";
 
 function XIcon() {
   return (
@@ -36,7 +37,7 @@ export function SiteFooter() {
       <div className="bg-footer">
         <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1.1fr_0.8fr_0.8fr_0.75fr] lg:gap-12 lg:py-14">
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href={routes.home} aria-label={`${site.name} home`}>
+            <HomeLink aria-label={`${site.name} home`}>
               <Image
                 src="/logo.svg"
                 alt={site.name}
@@ -45,7 +46,7 @@ export function SiteFooter() {
                 unoptimized
                 className="h-8 w-auto"
               />
-            </Link>
+            </HomeLink>
             <p className="mt-4 max-w-68 text-sm leading-relaxed text-ink/80">
               {site.tagline}
             </p>

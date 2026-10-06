@@ -3,21 +3,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { type FaqItem, FaqList } from "@/components/sections/faq";
-import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import { homeownerFaqs, installerFaqs } from "@/content/faqs";
-import { faqSchema, pageMetadata } from "@/lib/seo";
+import { faqEntities, pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "FAQs for Homeowners and Electricians",
   description:
     "Answers to common questions about PickASparky: free quotes for homeowners, how installers are vetted, how your details are shared and how electricians join.",
   path: routes.faq,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 type FaqGroupProps = {
   id: string;
@@ -120,7 +122,14 @@ export default function FaqPage() {
 
       <LocationsDirectory />
 
-      <JsonLd data={faqSchema([...homeownerFaqs, ...installerFaqs])} />
+      <PageSchema
+        {...page}
+        type="FAQPage"
+        crumb="FAQ"
+        extra={{
+          mainEntity: faqEntities([...homeownerFaqs, ...installerFaqs]),
+        }}
+      />
     </>
   );
 }

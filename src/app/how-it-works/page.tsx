@@ -8,17 +8,20 @@ import {
 import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { JsonLd } from "@/components/sections/json-ld";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { ButtonLink } from "@/components/ui/button";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { howToSchema, pageMetadata } from "@/lib/seo";
 import { routes } from "@/lib/site";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "How It Works for Homeowners and Electricians",
   description:
     "See how PickASparky works: homeowners enter a postcode and compare up to 5 free quotes from vetted electricians, and installers build a profile to win work.",
   path: routes.howItWorks,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const homeownerSteps: FlowStep[] = [
   {
@@ -133,6 +136,7 @@ export default function HowItWorksPage() {
 
       <LocationsDirectory />
 
+      <PageSchema {...page} crumb="How It Works" />
       <JsonLd
         data={howToSchema({
           name: "How to compare electrician quotes with PickASparky",

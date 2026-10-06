@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { api } from "@/lib/api";
-import { installerPath, locationPath, routes, site } from "@/lib/site";
+import { absoluteUrl } from "@/lib/seo";
+import { installerPath, locationPath, routes } from "@/lib/site";
 import type { InstallerCard } from "@/lib/types";
 
 // Regenerated hourly so new locations and installers are discovered quickly.
@@ -45,21 +46,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     allInstallers(),
   ]);
 
+  // Each installer appears once, at its one canonical profile URL, however
+  // many location pages list it.
   return [
     ...staticPages.map(({ path, priority }) => ({
-      url: `${site.url}${path === "/" ? "" : path}`,
+      url: absoluteUrl(path),
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority,
     })),
     ...locations.map((location) => ({
-      url: `${site.url}${locationPath(location.slug)}`,
+      url: absoluteUrl(locationPath(location.slug)),
       lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.8,
     })),
     ...installers.map((installer) => ({
-      url: `${site.url}${installerPath(installer.location_slug, installer.slug)}`,
+      url: absoluteUrl(installerPath(installer.slug)),
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.6,

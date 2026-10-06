@@ -11,18 +11,21 @@ import { LocationsDirectory } from "@/components/layout/locations-directory";
 import { type FaqItem, FaqList } from "@/components/sections/faq";
 import { Callout, StepNumber } from "@/components/sections/feature-blocks";
 import { PageHero } from "@/components/sections/page-hero";
+import { PageSchema } from "@/components/sections/page-schema";
 import { CheckBullet, IconBadge } from "@/components/ui/icon-badge";
 import { Container, Section, SectionHeading } from "@/components/ui/layout";
 import { pageMetadata } from "@/lib/seo";
 import { routes, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = pageMetadata({
+const page = {
   title: "How We Vet Installers and Electricians",
   description:
     "How PickASparky vets electricians before they are listed: Companies House business checks, accreditations such as NICEIC and NAPIT, services and coverage.",
   path: routes.vetting,
-});
+};
+
+export const metadata: Metadata = pageMetadata(page);
 
 const steps = [
   {
@@ -216,6 +219,8 @@ export default function VettingPage() {
       </Section>
 
       <LocationsDirectory />
+
+      <PageSchema {...page} crumb="How We Vet Installers" />
     </>
   );
 }
